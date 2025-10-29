@@ -1,22 +1,36 @@
 const express = require("express");
 
 const connectDB = require("./config/database");
+const User = require("./models/User");
 
 const app = express();
 
 //handler
 
-app.get("/user", (req, res) => {
-  console.log(req.query);
-  res.send({ firstName: "Surendra", lastName: "Yalakala", city: "Vijayawada" });
-});
+// app.get("/user", (req, res) => {
+//   console.log(req.query);
+//   res.send({ firstName: "Surendra", lastName: "Yalakala", city: "Vijayawada" });
+// });
 // app.get("/user/:userId/:firstName", (req, res) => {
 //   console.log(req.params);
 //   res.send({ firstName: "Surendra", lastName: "Yalakala", city: "Vijayawada" });
 // });
 
-app.post("/user", (req, res) => {
-  res.send("Data inserted successfully");
+app.post("/signup", async (req, res) => {
+  const userData = new User({
+    firstName: "surendra",
+    lastName: "yalakala",
+    emailId: "learn.vahini.surendra@gmail.com",
+    password: "abc@123",
+    age: 33,
+  });
+
+  try {
+    await userData.save();
+    res.send("Data inserted successfully");
+  } catch (error) {
+    res.status(400).send("Error user data insertion");
+  }
 });
 
 // app.use("/test", (req, res) => {
