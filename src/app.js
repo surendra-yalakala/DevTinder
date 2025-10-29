@@ -5,6 +5,9 @@ const User = require("./models/User");
 
 const app = express();
 
+// this will get json object from request
+app.use(express.json());
+
 //handler
 
 // app.get("/user", (req, res) => {
@@ -17,19 +20,21 @@ const app = express();
 // });
 
 app.post("/signup", async (req, res) => {
-  const userData = new User({
-    firstName: "surendra",
-    lastName: "yalakala",
-    emailId: "learn.vahini.surendra@gmail.com",
-    password: "abc@123",
-    age: 33,
-  });
+  // const userData = new User({
+  //   firstName: "surendra",
+  //   lastName: "yalakala",
+  //   emailId: "learn.vahini.surendra@gmail.com",
+  //   password: "abc@123",
+  //   age: 33,
+  // });
+
+  const userData = new User(req.body);
 
   try {
     await userData.save();
     res.send("Data inserted successfully");
   } catch (error) {
-    res.status(400).send("Error user data insertion");
+    res.status(400).send("Error user data insertion ", error);
   }
 });
 
@@ -50,5 +55,5 @@ connectDB()
     });
   })
   .catch((err) => {
-    console.error("Database connection failed");
+    console.error("Database connection failed ", err);
   });
