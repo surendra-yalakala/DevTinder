@@ -38,6 +38,53 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// GET
+// Get all documents
+app.get("/user", async (req, res) => {
+  try {
+    const resData = await User.find({});
+    res.send(resData);
+  } catch (error) {
+    res.status(400).send("Error get user data ", error);
+  }
+});
+
+app.get("/userById", async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const resData = await User.findById({ _id: userId });
+    res.send(resData);
+  } catch (error) {
+    res.status(400).send("Error get user data by id ", error);
+  }
+});
+
+// Update
+app.patch("/updateUser", async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const updatedData = await User.findByIdAndUpdate(
+      { _id: userId },
+      req.body,
+      { returnDocument: "after" }
+    );
+    res.send(updatedData);
+  } catch (error) {
+    res.status(400).send("Error update user by id ", error);
+  }
+});
+
+// Delete
+app.delete("/deleteUserById", async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    await User.findByIdAndDelete(userId);
+    res.send("User Deleted successfully");
+  } catch (error) {
+    res.status(400).send("Error delete ", error);
+  }
+});
+
 // app.use("/test", (req, res) => {
 //   res.send("Welcome to test");
 // });
