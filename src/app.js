@@ -34,7 +34,7 @@ app.post("/signup", async (req, res) => {
     await userData.save();
     res.send("Data inserted successfully");
   } catch (error) {
-    res.status(400).send("Error user data insertion ", error);
+    res.status(400).send("Error user data insertion " + error);
   }
 });
 
@@ -45,7 +45,7 @@ app.get("/user", async (req, res) => {
     const resData = await User.find({});
     res.send(resData);
   } catch (error) {
-    res.status(400).send("Error get user data ", error);
+    res.status(400).send("Error get user data " + error);
   }
 });
 
@@ -55,7 +55,7 @@ app.get("/userById", async (req, res) => {
     const resData = await User.findById({ _id: userId });
     res.send(resData);
   } catch (error) {
-    res.status(400).send("Error get user data by id ", error);
+    res.status(400).send("Error get user data by id " + error);
   }
 });
 
@@ -66,11 +66,11 @@ app.patch("/updateUser", async (req, res) => {
     const updatedData = await User.findByIdAndUpdate(
       { _id: userId },
       req.body,
-      { returnDocument: "after" }
+      { returnDocument: "after", runValidators: true }
     );
     res.send(updatedData);
   } catch (error) {
-    res.status(400).send("Error update user by id ", error);
+    res.status(400).send("Error update user by id " + error);
   }
 });
 
@@ -81,7 +81,7 @@ app.delete("/deleteUserById", async (req, res) => {
     await User.findByIdAndDelete(userId);
     res.send("User Deleted successfully");
   } catch (error) {
-    res.status(400).send("Error delete ", error);
+    res.status(400).send("Error delete " + error);
   }
 });
 
