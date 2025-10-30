@@ -60,9 +60,27 @@ app.get("/userById", async (req, res) => {
 });
 
 // Update
-app.patch("/updateUser", async (req, res) => {
+app.patch("/updateUser/:userId", async (req, res) => {
   try {
-    const userId = req.body.userId;
+    const ALLOWED_FIELDS = [
+      "firstName",
+      "lastName",
+      "password",
+      "age",
+      "gender",
+      "photoUrl",
+      "about",
+      "skills",
+    ];
+    const isAllowedFieldsOnly = Object.keys(req.body).every((field) => {
+      return ALLOWED_FIELDS.includes(field);
+    });
+
+    if (!isAllowedFieldsOnly) {
+      throw new Error("Email and some fields are restricted to update");
+    }
+
+    const userId = req.params.userId;
     const updatedData = await User.findByIdAndUpdate(
       { _id: userId },
       req.body,
