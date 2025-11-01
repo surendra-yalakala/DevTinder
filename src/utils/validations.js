@@ -2,7 +2,6 @@ const validator = require("validator");
 
 const doValidateSignUpData = (req) => {
   const { firstName, lastName, password, emailId } = req.body;
-  console.log(req.body);
 
   if (!firstName || !lastName) {
     throw new Error("Name should not be empty");
@@ -15,4 +14,18 @@ const doValidateSignUpData = (req) => {
   }
 };
 
-module.exports = { doValidateSignUpData };
+const doProfileEditValidations = (req) => {
+  const allowedProfileEditFields = [
+    "firstName",
+    "lastName",
+    "about",
+    "skills",
+    "photoUrl",
+  ];
+
+  return Object.keys(req.body).every((field) =>
+    allowedProfileEditFields.includes(field)
+  );
+};
+
+module.exports = { doValidateSignUpData, doProfileEditValidations };
