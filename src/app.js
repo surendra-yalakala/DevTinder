@@ -1,25 +1,21 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const User = require("./models/User");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const connectDB = require("./config/database");
-const User = require("./models/User");
 const { doValidateSignUpData } = require("./utils/validations");
+const { userAuth } = require("./middlewares/auth");
 
 const app = express();
 
 // this will get json object from request
 app.use(express.json());
+// parse the JWT token
+app.use(cookieParser());
 
 //handler
-
-// app.get("/user", (req, res) => {
-//   console.log(req.query);
-//   res.send({ firstName: "Surendra", lastName: "Yalakala", city: "Vijayawada" });
-// });
-// app.get("/user/:userId/:firstName", (req, res) => {
-//   console.log(req.params);
-//   res.send({ firstName: "Surendra", lastName: "Yalakala", city: "Vijayawada" });
-// });
 
 app.post("/signup", async (req, res) => {
   try {
@@ -52,10 +48,15 @@ app.post("/login", async (req, res) => {
       throw new Error("Invalid credentials");
     }
 
-    const isPwdCorrect = await bcrypt.compare(req.body.password, user.password);
+    const isPwdCorrect = await user.validatePassword(req.body.password);
     if (!isPwdCorrect) {
       throw new Error("Invalid credentials");
     } else {
+      const jwtToken = await user.getJWT();
+
+      res.cookie("token", jwtToken, {
+        expires: new Date(Date.now() + 1000 * 60 * 60),
+      });
       res.send("Login Success !!");
     }
   } catch (error) {
@@ -64,6 +65,15 @@ app.post("/login", async (req, res) => {
 });
 
 // GET
+app.get("/profile", userAuth, (req, res) => {
+  try {
+    const user = req.user;
+    res.send(user);
+  } catch (error) {
+    res.status(400).send("Error get profile " + error);
+  }
+});
+
 // Get all documents
 app.get("/user", async (req, res) => {
   try {
