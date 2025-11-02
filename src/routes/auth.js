@@ -46,7 +46,7 @@ router.post("/login", async (req, res) => {
       res.cookie("token", jwtToken, {
         expires: new Date(Date.now() + 1000 * 60 * 60),
       });
-      res.send("Login Success !!");
+      res.send(user);
     }
   } catch (error) {
     res.status(400).send("Error user login " + error);

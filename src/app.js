@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const connectDB = require("./config/database");
 const authRouter = require("./routes/auth");
@@ -9,6 +10,12 @@ const userRouter = require("./routes/user");
 
 const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 // this will get json object from request
 app.use(express.json());
 // parse the JWT token
