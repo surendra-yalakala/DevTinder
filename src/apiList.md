@@ -20,7 +20,7 @@
 <!-- user router -->
 
 - GET /user/connections
-- GET /user/requess
+- GET /user/requests/received
 - GET /user/feed - gets you the profile of other users on platform
 
 Status: ignore , interested, accepted, rejected
