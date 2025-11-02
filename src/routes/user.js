@@ -2,6 +2,7 @@ const express = require("express");
 
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
+const User = require("../models/User");
 const router = express.Router();
 
 const USER_SAFE_DATA = "firstName lastName age gender photoUrl about skills";
@@ -51,4 +52,39 @@ router.get("/user/connections", userAuth, async (req, res) => {
   }
 });
 
+router.get("/feed", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+
+    const skip = parseInt(req.query.skip) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : 10;
+
+    const connectionRequest = await ConnectionRequest.find({
+      $or: [
+        { _id: loggedInUser.fromUserId._id },
+        { _id: loggedInUser.toUserId._id },
+      ],
+    }).select("fromUserId toUserId");
+
+    const hiddenUserFromFeed = new Set();
+    connectionRequest.forEach((req) => {
+      hiddenUserFromFeed.add(req.fromUserId.toString());
+      hiddenUserFromFeed.add(req.toUserId.toString());
+    });
+
+    const data = await User.find({
+      $and: [
+        { _id: { $nin: Array.from(hiddenUserFromFeed) } },
+        { _id: { $ne: loggedInUser._id } },
+      ],
+    })
+      .select(USER_SAFE_DATA)
+      .skip(skip)
+      .limit(limit);
+    res.json({ data });
+  } catch (error) {
+    res.status(400).send({ message: "Error user feed " + error });
+  }
+});
 module.exports = router;
