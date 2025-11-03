@@ -21,6 +21,8 @@ const doProfileEditValidations = (req) => {
     "about",
     "skills",
     "photoUrl",
+    "gender",
+    "age",
   ];
 
   return Object.keys(req.body).every((field) =>
