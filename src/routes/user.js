@@ -56,19 +56,17 @@ router.get("/feed", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
 
-    const skip = parseInt(req.query.skip) || 1;
+    const page = parseInt(req.query.skip) || 1;
     let limit = parseInt(req.query.limit) || 10;
     limit = limit > 50 ? 50 : 10;
+    const skip = (page - 1) * limit;
 
-    const connectionRequest = await ConnectionRequest.find({
-      $or: [
-        { _id: loggedInUser.fromUserId._id },
-        { _id: loggedInUser.toUserId._id },
-      ],
+    const connectionRequests = await ConnectionRequest.find({
+      $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
     }).select("fromUserId toUserId");
 
     const hiddenUserFromFeed = new Set();
-    connectionRequest.forEach((req) => {
+    connectionRequests.forEach((req) => {
       hiddenUserFromFeed.add(req.fromUserId.toString());
       hiddenUserFromFeed.add(req.toUserId.toString());
     });
@@ -82,9 +80,10 @@ router.get("/feed", userAuth, async (req, res) => {
       .select(USER_SAFE_DATA)
       .skip(skip)
       .limit(limit);
+
     res.json({ data });
   } catch (error) {
-    res.status(400).send({ message: "Error user feed " + error });
+    res.status(400).send({ message: error.message });
   }
 });
 module.exports = router;
