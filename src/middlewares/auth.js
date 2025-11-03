@@ -6,7 +6,7 @@ const userAuth = async (req, res, next) => {
     const { token } = req.cookies;
 
     if (!token) {
-      throw new Error("Invalid token");
+      return res.status(401).send({ message: "Token expired" });
     }
 
     const decodedObj = await jwt.verify(token, "DevTinder$119");
