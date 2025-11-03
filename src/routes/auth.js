@@ -34,12 +34,12 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ emailId: req.body.emailId });
 
     if (!user?.emailId) {
-      throw new Error("Invalid credentials");
+      return res.status(400).send({ message: "Invalid credentials" });
     }
 
     const isPwdCorrect = await user.validatePassword(req.body.password);
     if (!isPwdCorrect) {
-      throw new Error("Invalid credentials");
+      return res.status(400).send({ message: "Invalid credentials" });
     } else {
       const jwtToken = await user.getJWT();
 
@@ -49,7 +49,7 @@ router.post("/login", async (req, res) => {
       res.send(user);
     }
   } catch (error) {
-    res.status(400).send("Error user login " + error);
+    res.status(400).send(error);
   }
 });
 
@@ -58,9 +58,9 @@ router.post("/logout", (req, res) => {
     res.cookie("token", null, {
       expires: new Date(Date.now()),
     });
-    res.send("Logout successfull !!");
+    res.send({ message: "Logout successfull !!" });
   } catch (error) {
-    res.status(400).send("Error logout " + error);
+    res.status(400).send({ message: error });
   }
 });
 
