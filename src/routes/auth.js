@@ -22,10 +22,19 @@ router.post("/signup", async (req, res) => {
       password: hashPassword,
     });
 
+    const jwtToken = await userData.getJWT();
+
+    res.cookie("token", jwtToken, {
+      expires: new Date(Date.now() + 1000 * 60 * 60),
+    });
+
     await userData.save();
-    res.send("Data inserted successfully");
+    res.json({ data: userData });
   } catch (error) {
-    res.status(400).send("Error user data insertion " + error);
+    res.status(400).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
   }
 });
 
