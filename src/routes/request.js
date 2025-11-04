@@ -83,8 +83,6 @@ router.post(
         status: "interested",
       });
 
-      console.log(connectionRequest, requestId, loggedInUser, status);
-
       if (!connectionRequest) {
         return res
           .status(400)
