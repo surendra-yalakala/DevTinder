@@ -2,7 +2,6 @@ const express = require("express");
 
 const { userAuth } = require("../middlewares/auth");
 const { doProfileEditValidations } = require("../utils/validations");
-const { pipeline } = require("nodemailer/lib/xoauth2");
 
 const router = express.Router();
 
