@@ -1,6 +1,7 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+require("dotenv").config();
 
 const connectDB = require("./config/database");
 const authRouter = require("./routes/auth");
@@ -31,7 +32,7 @@ connectDB()
     console.log("Data base connection established successfully");
 
     // attching the port
-    app.listen(7777, () => {
+    app.listen(process.env.PORT, () => {
       console.log("Server creation successfully done !!");
     });
   })
