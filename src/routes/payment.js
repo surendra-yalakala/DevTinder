@@ -33,7 +33,7 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
     };
 
     const order = await razorpayInstance.orders.create(options);
-    console.log(order);
+    // console.log("order creation :: ", order);
 
     const payment = new Payment({
       userId: req.user._id,
