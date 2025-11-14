@@ -1,5 +1,6 @@
 const socket = require("socket.io");
 const crypto = require("crypto");
+const Chat = require("../models/chat");
 
 const generateRoomId = (userId, targetUserId) => {
   return crypto
@@ -27,6 +28,24 @@ const initializeSocket = (server) => {
       async ({ firstName, lastName, userId, targetUserId, text }) => {
         try {
           const roomId = generateRoomId(userId, targetUserId);
+
+          let chat = await Chat.findOne({
+            participants: { $all: [userId, targetUserId] },
+          });
+
+          if (!chat) {
+            chat = new Chat({
+              participants: [userId, targetUserId],
+              messages: [],
+            });
+          }
+
+          chat.messages.push({
+            senderId: userId,
+            text,
+          });
+
+          await chat.save();
 
           // Broadcast the message to all connected clients
           io.to(roomId).emit("messageReceived", { firstName, lastName, text });
